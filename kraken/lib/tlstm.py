@@ -259,7 +259,7 @@ class TlstmSeqRecognizer(kraken.lib.lstm.SeqRecognizer):
             return kraken.lib.lstm.translate_back(output.exp().cpu().squeeze().data.numpy())
 
         _, preds = output.cpu().max(2) # max() outputs values +1 when on gpu. why?
-        dec = preds.squeeze(2).transpose(1,0).contiguous().view(-1).data
+        dec = preds.transpose(1,0).contiguous().view(-1).data
         char_list = []
         for i in range(len(dec)):
             if dec[i] != 0 and (not (i > 0 and dec[i-1] == dec[i])):
@@ -271,7 +271,7 @@ class TlstmSeqRecognizer(kraken.lib.lstm.SeqRecognizer):
             return kraken.lib.lstm.translate_back_locations(output.exp().cpu().squeeze().data.numpy())
 
         val, preds = output.cpu().max(2) # max() outputs values +1 when on gpu. why?
-        dec = preds.squeeze(2).transpose(1,0).contiguous().view(-1).data
+        dec = preds.transpose(1,0).contiguous().view(-1).data
         char_list = []
         start = None
         for i in range(len(dec)):
