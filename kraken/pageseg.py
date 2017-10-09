@@ -385,15 +385,18 @@ def segment(im, text_direction='horizontal-tb', scale=None, maxcolseps=2, black_
         scale = estimate_scale(binary)
 
     binary = remove_hlines(binary, scale)
-    # emptyish images wll cause exceptions here.
+    # emptyish images will cause exceptions here.
     
-    try:
-        if black_colseps:
-            colseps, binary = compute_black_colseps(binary, scale, maxcolseps)
-        else:
-            colseps = compute_white_colseps(binary, scale, maxcolseps)
-    except ValueError:
-        return {'text_direction': text_direction, 'boxes':  []}
+    if maxcolseps:
+        try:
+            if black_colseps:
+                colseps, binary = compute_black_colseps(binary, scale, maxcolseps)
+            else:
+                colseps = compute_white_colseps(binary, scale, maxcolseps)
+        except ValueError:
+            return {'text_direction': text_direction, 'boxes':  []}
+    else:
+        colseps = np.zeros(binary.shape)
     
     bottom, top, boxmap = compute_gradmaps(binary, scale)
     seeds = compute_line_seeds(binary, bottom, top, colseps, scale)
@@ -403,9 +406,12 @@ def segment(im, text_direction='horizontal-tb', scale=None, maxcolseps=2, black_
     segmentation = llabels*binary
 
     lines = compute_lines(segmentation, scale)
-    order = reading_order([l.bounds for l in lines])
-    lsort = topsort(order)
-    lines = [lines[i].bounds for i in lsort]
+    if maxcolseps:
+        order = reading_order([l.bounds for l in lines])
+        lsort = topsort(order)
+        lines = [lines[i].bounds for i in lsort]
+    else:
+        lines = [l.bounds for l in lines]
     lines = [(s2.start, s1.start, s2.stop, s1.stop) for s1, s2 in lines]
     return {'text_direction': text_direction, 'boxes':  rotate_lines(lines, 360-angle, offset).tolist()}
 
