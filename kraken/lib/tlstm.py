@@ -52,7 +52,6 @@ class TBIDILSTM(nn.Module):
         
         
     def forward(self, inp, hidden):
-        leninp = len(inp)
         cuda = True if inp.is_cuda else False
         
         ones1 = Variable(torch.ones(inp.size()[0], inp.size()[1], 1))
@@ -253,6 +252,18 @@ class TlstmSeqRecognizer(kraken.lib.lstm.SeqRecognizer):
         
         if self.cuda_available:
             self.cuda()
+
+    def load_codec(self, newcodec, initrange=0.1):
+        newdecoder = nn.Linear(2*self.rnn.nhidden+1, newcodec.size(), bias=False)
+        if self.rnn.decoder.weight.is_cuda:
+            newdecoder = newdecoder.cuda()
+        newdecoder.weight.data.uniform_(-initrange, initrange)
+        for c in newcodec.char2code:
+            if c in self.codec.char2code:
+                newdecoder.weight.data[newcodec.char2code[c]] = self.rnn.decoder.weight.data[self.codec.char2code[c]]
+        self.rnn.decoder = newdecoder
+        self.codec = newcodec
+        self.rnn.noutput = newcodec.size()
         
     def translate_back(self, output):
         if self.mode == 'clstm_compatibility':
