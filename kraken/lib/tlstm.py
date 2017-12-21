@@ -34,7 +34,7 @@ class TBIDILSTM(nn.Module):
         
         self.rnn = nn.LSTM(ninp+1, nhid, 1, bias=False, bidirectional=True)
         self.decoder = nn.Linear(2*nhid+1, nop, bias=False)
-        self.softmax = nn.LogSoftmax()
+        self.softmax = nn.LogSoftmax(dim=1)
         
         self.init_weights()
         
