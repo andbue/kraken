@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+* Added dim parameter to softmax
+* Added function to replace/resize codec to tlstm
+* Don't detect colseps and reorder for maxcolseps==0
+* Small change fixing error in translate\_back (new torch version?)
+* fixed translate\_back\_locations, stopped using translate\_back in tlstm
 * workaround for diverging output of translate\_back and translate\_back\_locations
 * Training and OCR in Torch now enabled in the CLI
 * translate\_back\_locations; tlstm now in rpred

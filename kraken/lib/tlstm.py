@@ -309,7 +309,7 @@ class TlstmSeqRecognizer(kraken.lib.lstm.SeqRecognizer):
         return res
     
     def trainSequence(self, line, labels, update=1):        
-        line = Variable(torch.from_numpy(line.reshape(-1, 1, self.rnn.ninput).astype('float32')), requires_grad=True)
+        line = Variable(torch.from_numpy(line.reshape(-1, 1, self.rnn.ninput).astype('float32')))
         
         if self.cuda_available:
             line = line.cuda()
