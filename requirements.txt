@@ -1,11 +1,4 @@
-lxml
 future
-requests
-click>=5.0
 numpy
 Pillow
-regex
 scipy
-protobuf>=3.0.0
-jinja2
-python-bidi
