@@ -174,7 +174,8 @@ class VGSLRecognitionDataModule(L.LightningDataModule):
                 else:
                     logger.info(f'Setting dataset legacy polygon status to {legacy_train_status} based on training set.')
                 self.use_legacy_polygons = legacy_train_status
-
+            if getattr(train_set, '_transforms_valid_norm', False) or getattr(val_set, '_transforms_valid_norm', False):
+                transforms.valid_norm = True
             train_set.transforms = transforms
             val_set.transforms = transforms
 
@@ -198,6 +199,8 @@ class VGSLRecognitionDataModule(L.LightningDataModule):
         elif stage == 'test':
             if getattr(self, 'test_set', None) is None or len(self.test_set) == 0:
                 raise ValueError('No test data in dataset. Please supply some.')
+            if getattr(self.test_set.dataset, '_transforms_valid_norm', False):
+                transforms.valid_norm = True
             self.test_set.dataset.transforms = transforms
             self.test_set.dataset.no_encode()
 

@@ -124,6 +124,7 @@ class ArrowIPCRecognitionDataset(Dataset):
         self.transforms = im_transforms
         self.aug = None
         self._split_filter = split_filter
+        self._transforms_valid_norm = False
         self._num_lines = 0
         self.arrow_table = None
         self.codec = None
@@ -177,7 +178,9 @@ class ArrowIPCRecognitionDataset(Dataset):
             return
         # centerline normalize raw bbox dataset
         if self.seg_type == 'bbox' and metadata['image_type'] == 'raw':
-            self.transforms.valid_norm = True
+            self._transforms_valid_norm = True
+            if self.transforms is not None:
+                self.transforms.valid_norm = True
 
         legacy_polygons = metadata.get('legacy_polygons', True)
         if self.legacy_polygons_status is None:
